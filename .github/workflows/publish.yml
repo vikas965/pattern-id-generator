@@ -17,4 +17,4 @@ jobs:
       - run: npm test      # Optional: Run tests before publishing
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.patternidgenerator }}
