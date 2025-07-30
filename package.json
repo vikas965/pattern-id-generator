@@ -1,0 +1,32 @@
+{
+    "name": "pattern-id-generator",
+    "version": "1.0.2",
+    "description": "A flexible pattern-based random ID generator",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "scripts": {
+        "test": "jest"
+    },
+    "keywords": [
+        "random",
+        "id",
+        "generator",
+        "pattern",
+        "string",
+        "unique",
+        "identifier"
+    ],
+    "author": "Your Name <your.email@example.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vikas965/pattern-id-generator.git"
+    },
+    "bugs": {
+        "url": "https://github.com/vikas965/pattern-id-generator/issues"
+    },
+    "homepage": "https://github.com/vikas965/pattern-id-generator#readme",
+    "devDependencies": {
+        "jest": "^29.7.0"
+    }
+}
