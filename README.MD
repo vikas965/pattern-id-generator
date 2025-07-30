@@ -54,7 +54,7 @@ generateId('USER-####-AA'); // "USER-5832-QW"
 - `pattern` (string): The pattern to use for generation
 - `count` (number, optional): Number of IDs to generate (default: 1)
 
-Returns: A string if count is 1, or an array of strings if count > 1 
+Returns: A string if count is 1, or an array of strings if count > 1 .
 
 ## License
 
