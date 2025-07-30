@@ -1,6 +1,6 @@
 {
     "name": "pattern-id-generator",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "A flexible pattern-based random ID generator",
     "main": "index.js",
     "types": "index.d.ts",
