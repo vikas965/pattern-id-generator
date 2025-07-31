@@ -1,9 +1,6 @@
 {
   "name": "pattern-id-generator",
-
-  "version": "1.0.20",
-
-
+  "version": "1.0.21",
   "description": "A flexible pattern-based random ID generator",
   "main": "index.js",
   "types": "index.d.ts",
@@ -26,7 +23,8 @@
       "name": "Vijay Krishna Inampudi",
       "email": "vijaykrishnainampudi6@gmail.com",
       "url": "https://github.com/Vijay-Krish-0806"
-    }],
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
