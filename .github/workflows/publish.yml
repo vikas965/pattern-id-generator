@@ -3,45 +3,45 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    types: [closed]  # Add PR trigger for contributor updates
+    types: [closed]
   workflow_dispatch:
 
 jobs:
   handle-contributors-and-publish:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout code
+      # Step 1: Checkout
       - uses: actions/checkout@v4
 
-      # Step 2: Add contributor (only on PR merge)
+      # Step 2: Add contributor (using gr2m's action)
       - name: Update contributors
         if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
-        uses: mheap/update-package-json-contributors@v1
+        uses: gr2m/add-contributors@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          format: "github"  # Adds @username format
+          format: "github"  # Adds as @username
 
-      # Step 3: Commit contributor changes (if any)
+      # Step 3: Commit changes
       - name: Commit contributor updates
         if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add package.json
-          git commit -m "docs: Add @${{ github.event.pull_request.user.login }} as contributor" || echo "No contributor changes"
+          git commit -m "docs: Add @${{ github.event.pull_request.user.login }} as contributor" || echo "No changes"
           git push
 
-      # Step 4: Setup Node and publish
+      # Step 4: Setup Node
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
 
-      # Step 5: Install and test
+      # Step 5: Install + Test
       - run: npm ci
-      - run: npm test  # Optional: Remove if no tests
+      - run: npm test
 
-      # Step 6: Publish (on push OR after contributor update)
+      # Step 6: Publish
       - name: Publish to npm
         if: |
           github.event_name == 'push' || 
@@ -50,4 +50,4 @@ jobs:
           npm version patch -m "Auto-bump: ${{ github.event.head_commit.message || 'Add contributor' }}"
           npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.patternidgenerator }}  # Your existing secret
+          NODE_AUTH_TOKEN: ${{ secrets.patternidgenerator }}
