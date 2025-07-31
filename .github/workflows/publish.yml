@@ -10,16 +10,36 @@ jobs:
   handle-contributors-and-publish:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout
+      # Step 1: Checkout code
       - uses: actions/checkout@v4
-
-      # Step 2: Add contributor (using gr2m's action)
+      
+      # Step 2: Add contributor (native implementation)
       - name: Update contributors
         if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
-        uses: gr2m/add-contributors@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          format: "github"  # Adds as @username
+        run: |
+          # Install jq for JSON processing
+          sudo apt-get install -y jq
+          
+          # Get contributor's GitHub username
+          CONTRIBUTOR="@${{ github.event.pull_request.user.login }}"
+          
+          # Update package.json
+          if [ -f package.json ]; then
+            # Read current contributors or initialize array
+            CURRENT_CONTRIBUTORS=$(jq '.contributors // []' package.json)
+            
+            # Add new contributor if not already present
+            UPDATED_CONTRIBUTORS=$(echo "$CURRENT_CONTRIBUTORS" | jq --arg user "$CONTRIBUTOR" '. + [$user] | unique')
+            
+            # Write back to package.json
+            jq --argjson contributors "$UPDATED_CONTRIBUTORS" '.contributors = $contributors' package.json > temp.json
+            mv temp.json package.json
+            
+            echo "Added contributor: $CONTRIBUTOR"
+          else
+            echo "package.json not found"
+            exit 1
+          fi
 
       # Step 3: Commit changes
       - name: Commit contributor updates
@@ -28,7 +48,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add package.json
-          git commit -m "docs: Add @${{ github.event.pull_request.user.login }} as contributor" || echo "No changes"
+          git commit -m "docs: Add @${{ github.event.pull_request.user.login }} as contributor" || echo "No changes to commit"
           git push
 
       # Step 4: Setup Node
@@ -37,11 +57,13 @@ jobs:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
 
-      # Step 5: Install + Test
+      # Step 5: Install dependencies
       - run: npm ci
+
+      # Step 6: Run tests (optional)
       - run: npm test
 
-      # Step 6: Publish
+      # Step 7: Publish to npm
       - name: Publish to npm
         if: |
           github.event_name == 'push' || 
