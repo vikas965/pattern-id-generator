@@ -1,6 +1,9 @@
 {
   "name": "pattern-id-generator",
-  "version": "1.0.14",
+
+  "version": "1.0.17",
+
+
   "description": "A flexible pattern-based random ID generator",
   "main": "index.js",
   "types": "index.d.ts",
@@ -16,7 +19,7 @@
     "unique",
     "identifier"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Vikas",
   "license": "MIT",
   "repository": {
     "type": "git",
