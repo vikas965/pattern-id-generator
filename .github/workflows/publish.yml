@@ -10,16 +10,18 @@ jobs:
   handle-contributors-and-publish:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout code
+      # Step 1: Checkout with persistent token
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # Critical for PAT auth later
 
-      # Step 2: Configure Git identity (CRITICAL FIX)
+      # Step 2: Configure Git identity
       - name: Set up Git user
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      # Step 3: Add contributor (native implementation)
+      # Step 3: Add contributor
       - name: Update contributors
         if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
         run: |
@@ -30,10 +32,13 @@ jobs:
           jq --argjson contributors "$UPDATED_CONTRIBUTORS" '.contributors = $contributors' package.json > temp.json
           mv temp.json package.json
 
-      # Step 4: Commit changes
-      - name: Commit contributor updates
+      # Step 4: Commit changes with PAT auth
+      - name: Commit and push contributor updates
         if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # Your PAT
         run: |
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
           git add package.json
           git commit -m "docs: Add @${{ github.event.pull_request.user.login }} as contributor" || echo "No changes to commit"
           git push
